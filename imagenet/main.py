@@ -148,7 +148,9 @@ def main():
         validate(val_loader, model, criterion)
         return
 
+    total_time = time.time()
     for epoch in range(args.start_epoch, args.epochs):
+        epoch_time = time.time()
         if args.distributed:
             train_sampler.set_epoch(epoch)
         adjust_learning_rate(optimizer, epoch)
@@ -169,6 +171,10 @@ def main():
             'best_prec1': best_prec1,
             'optimizer' : optimizer.state_dict(),
         }, is_best)
+        epoch_time = time.time() - epoch_time
+        print('epoch time: %f' % epoch_time)
+    total_time = time.time() - total_time
+    print('total time: %f' % total_time)
 
 
 def train(train_loader, model, criterion, optimizer, epoch):
